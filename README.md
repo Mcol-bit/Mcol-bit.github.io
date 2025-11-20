@@ -40,7 +40,7 @@
                 Myan Colatat<span class="text-blue-500">.dev</span>
             </h1>
             <nav class="hidden md:block">
-                <ul class="flex space-x-8">
+                <ul class="flex space-x-8 items -center">
                     <li><a href="#about" class="text-gray-600 hover:text-blue-600 transition duration-300 font-medium">About</a></li>
                     <li><a href="#projects" class="text-gray-600 hover:text-blue-600 transition duration-300 font-medium">Projects</a></li>
                     <li><a href="#skills" class="text-gray-600 hover:text-blue-600 transition duration-300 font-medium">Skills</a></li>
