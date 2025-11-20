@@ -77,10 +77,10 @@
         <section id="hero" class="py-16 md:py-24 text-center">
             <div class="max-w-4xl mx-auto">
                 <!-- Placeholder for profile image -->
-                <img src="https://placehold.co/150x150/3b82f6/ffffff?text=JD" 
+                <img src="https://placehold.co/150x150/3b82f6/ffffff?text=MC" 
                      alt="Profile Picture of Myan Colatat" 
                      class="w-32 h-32 rounded-full mx-auto mb-6 shadow-xl object-cover border-4 border-white transform hover:scale-105 transition duration-300"
-                     onerror="this.onerror=null; this.src='https://placehold.co/150x150/3b82f6/ffffff?text=JD';">
+                     onerror="this.onerror=null; this.src='https://placehold.co/150x150/3b82f6/ffffff?text=MC';">
                 
                 <h2 class="text-5xl md:text-6xl font-extrabold text-gray-900 mb-4 leading-tight">
                     Hello, I'm <span class="text-blue-600">Myan Colatat</span>.
