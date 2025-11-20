@@ -37,7 +37,7 @@
     <header class="bg-white shadow-md sticky top-0 z-50">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
             <h1 class="text-2xl font-bold text-gray-900 tracking-wider">
-                Jane Doe<span class="text-blue-500">.dev</span>
+                Myan Colatat<span class="text-blue-500">.dev</span>
             </h1>
             <nav class="hidden md:block">
                 <ul class="flex space-x-6">
@@ -78,12 +78,12 @@
             <div class="max-w-4xl mx-auto">
                 <!-- Placeholder for profile image -->
                 <img src="https://placehold.co/150x150/3b82f6/ffffff?text=JD" 
-                     alt="Profile Picture of Jane Doe" 
+                     alt="Profile Picture of Myan Colatat" 
                      class="w-32 h-32 rounded-full mx-auto mb-6 shadow-xl object-cover border-4 border-white transform hover:scale-105 transition duration-300"
                      onerror="this.onerror=null; this.src='https://placehold.co/150x150/3b82f6/ffffff?text=JD';">
                 
                 <h2 class="text-5xl md:text-6xl font-extrabold text-gray-900 mb-4 leading-tight">
-                    Hello, I'm <span class="text-blue-600">Jane Doe</span>.
+                    Hello, I'm <span class="text-blue-600">Myan Colatat</span>.
                 </h2>
                 <p class="text-2xl text-gray-600 mb-8 font-light">
                     A Full-Stack Developer focused on building accessible, robust, and beautiful digital experiences.
@@ -288,7 +288,7 @@
     <!-- Footer -->
     <footer class="bg-gray-800 text-white mt-16 py-8">
         <div class="container mx-auto px-4 text-center">
-            <p class="mb-4">&copy; <span id="current-year"></span> Jane Doe. All rights reserved.</p>
+            <p class="mb-4">&copy; <span id="current-year"></span> Myan Colatat. All rights reserved.</p>
             <div class="flex justify-center space-x-6">
                 <!-- Social Links -->
                 <a href="#" class="text-gray-400 hover:text-blue-400 transition duration-300">
