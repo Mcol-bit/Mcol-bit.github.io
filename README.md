@@ -86,7 +86,7 @@
                     Hello, I'm <span class="text-blue-600">Myan Colatat</span>.
                 </h2>
                 <p class="text-2xl text-gray-600 mb-8 font-light">
-                    A Full-Stack Developer focused on building accessible, robust, and beautiful digital experiences.
+                    An experienced Technical Manger and aspiring AI Engineer focused on building valuable, robust, and beautiful digital experiences.
                 </p>
                 <a href="#projects" class="inline-block bg-blue-600 text-white font-semibold py-3 px-8 rounded-full shadow-lg hover:bg-blue-700 transition duration-300 transform hover:-translate-y-0.5">
                     View My Work &rarr;
