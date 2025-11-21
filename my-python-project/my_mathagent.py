@@ -2,19 +2,21 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 import os
 from langchain_community.tools import DuckDuckGoSearchResults
 from langchain_core.tools import tool
-from langchain_core.messages import HumanMessage
 import numexpr as ne
+from dotenv import load_dotenv
+from langgraph.prebuilt import create_react_agent
+
+# Load environment variables from .env file
+load_dotenv()
 
 # --- 1. Setup and Tool Definitions ---
 
 # ⚠️ SECURITY ALERT: Do NOT hardcode API keys in production code. 
-# Use os.environ['GOOGLE_API_KEY'] to load it from your environment.
-# Set your API key in the environment: export GOOGLE_API_KEY='your_key_here'
 if 'GOOGLE_API_KEY' not in os.environ:
-    raise ValueError("Please set GOOGLE_API_KEY environment variable")
+    raise ValueError("Please set GOOGLE_API_KEY in your .env file")
 
-# Initialize the LLM (Gemini 2.5 Flash is a good choice for tool use)
-llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", temperature=0)
+# Initialize the LLM
+llm = ChatGoogleGenerativeAI(model="models/gemini-2.0-flash", temperature=0)
 
 # Initialize the search tool
 ddg_search = DuckDuckGoSearchResults()
@@ -32,42 +34,28 @@ def calculate(expression: str) -> str:
         # Return a clear error message if calculation fails
         return f"Error calculating the expression '{expression}': {e}"
 
-# Pass the tools to the agent  
+# Pass the tools to the agent  
 tools = [ddg_search, calculate]
-
 
 # --- 2. Agent Initialization ---
 
-# 1. Create the Agent (defines the logic and prompt)
-# This uses the HumanMessage, list of tools, and an LLM to generate the agent's logic.
-agent_runnable = create_tool_calling_agent(
-    llm=llm,
-    tools=tools,
-    # The default prompt handles the agent's instructions and history
-)
-
-# 2. Create the Agent Executor (manages the execution loop)
-# This takes the agent logic and the tools, handling the tool calls and final response generation.
-agent_executor = AgentExecutor(
-    agent=agent_runnable,
-    tools=tools,
-    verbose=True # Set to True to see the thought process!
-)
-
-
+# Create the agent using langgraph
+agent_executor = create_react_agent(llm, tools)
 # --- 3. Execution ---
 
 prompt_text = """
-Which government department is Elon Musk heading currently? 
-What is the result of 58 + 92?
+What are the personality traits of a shiba inu? 
+What is the difference of 90-100?
 """
 
 print(f"The prompt is: {prompt_text}\n")
-print("--- Agent Execution Log ---")
+print("="*50)
 
-# Invoke the Agent Executor
-response = agent_executor.invoke({"input": prompt_text})
+# Execute
+for chunk in agent_executor.stream(
+    {"messages": [("user", prompt_text)]},
+    stream_mode="values"
+):
+    chunk["messages"][-1].pretty_print()
 
-print("\n--- Final Answer ---")
-# The final answer is in the 'output' key
-print(response['output'])
+print("="*50)

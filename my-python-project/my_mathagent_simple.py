@@ -3,13 +3,16 @@ import os
 from langchain_community.tools import DuckDuckGoSearchResults
 from langchain_core.tools import tool
 import numexpr as ne
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Setup API key
-# Set your API key in the environment: export GOOGLE_API_KEY='your_key_here'
 if 'GOOGLE_API_KEY' not in os.environ:
-    raise ValueError("Please set GOOGLE_API_KEY environment variable")
+    raise ValueError("Please set GOOGLE_API_KEY in your .env file")
 
-# Initialize the LLM
+# Initialize the LLM (using gemini-2.0-flash-exp for the latest model)
 llm = ChatGoogleGenerativeAI(model="models/gemini-2.0-flash-exp", temperature=0)
 
 # Initialize the search tool
