@@ -1,0 +1,7 @@
+langchain-google-genai
+langchain-community
+numexpr
+langgraph
+streamlit
+python-dotenv
+ddgs

@@ -1,3 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <title>stlite app</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@stlite/mountable@0.39.0/build/stlite.css"
+    />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script src="https://cdn.jsdelivr.net/npm/@stlite/mountable@0.39.0/build/stlite.js"></script>
+    <script>
+      stlite.mount(
+        {
+          requirements: [
+            "langchain-google-genai",
+            "langchain-community",
+            "numexpr",
+            "langgraph",
+            "streamlit",
+            "python-dotenv",
+            "ddgs"
+          ],
+          entrypoint: "my_mathagent.py",
+          files: {
+            "my_mathagent.py": `
 from langchain_google_genai import ChatGoogleGenerativeAI
 import os
 from langchain_community.tools import DuckDuckGoSearchResults
@@ -83,3 +116,11 @@ if st.button("Run Agent", key="run_button"):
 
         except Exception as e:
             st.error(f"An error occurred: {e}")
+`,
+          },
+        },
+        document.getElementById("root")
+      );
+    </script>
+  </body>
+</html>
