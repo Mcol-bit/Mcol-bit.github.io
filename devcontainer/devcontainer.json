@@ -1,0 +1,47 @@
+{
+    // The name of the environment that appears in the VS Code UI
+    "name": "Python 3.11 Development Environment",
+
+    // Use the Dockerfile created above to build the environment
+    "build": {
+        "dockerfile": "Dockerfile",
+        "context": ".."
+    },
+
+    // Features to install (e.g., node, Docker CLI)
+    "features": {
+        // Example: Install the Docker CLI inside the container
+        "ghcr.io/devcontainers/features/docker-in-docker:2": {
+            "version": "latest",
+            "moby": true
+        }
+    },
+
+    // Settings applied when the container is opened in VS Code/Codespaces
+    "settings": {
+        "python.defaultInterpreterPath": "/usr/local/bin/python",
+        "python.analysis.autoSearchPaths": true,
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": "explicit"
+        }
+    },
+
+    // VS Code extensions to install automatically
+    "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "esbenp.prettier-vscode",
+        "eamodio.gitlens"
+    ],
+
+    // Commands to run after the container is created but before the workspace is opened
+    "postCreateCommand": "pip install --no-cache-dir -r requirements.txt || true",
+
+    // Ports to automatically forward to the local machine (e.g., web server)
+    "forwardPorts": [8000, 5000],
+
+    // Define the remote user for VS Code (must match the user in the Dockerfile, if specified)
+    // By default, it runs as 'vscode' with the base Python images.
+    "remoteUser": "vscode"
+}
