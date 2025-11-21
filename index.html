@@ -20,103 +20,98 @@
       stlite.mount(
         {
           requirements: [
-            "langchain-google-genai",
-            "langchain-community",
-            "numexpr",
-            "langgraph",
             "streamlit",
-            "python-dotenv",
-            "ddgs",
-            "numpy>=1.26.2"
+            "requests"
           ],
           entrypoint: "my_mathagent.py",
           files: {
             "my_mathagent.py": `
-from langchain_google_genai import ChatGoogleGenerativeAI
-import os
-from langchain_community.tools import DuckDuckGoSearchResults
-from langchain_core.tools import tool
-import numexpr as ne
-from dotenv import load_dotenv
-from langgraph.prebuilt import create_react_agent
 import streamlit as st
+import requests
+import re
+import ast
+import operator as op
 
-# Load environment variables from .env file
-load_dotenv()
+# Math operators for safe evaluation
+operators = {ast.Add: op.add, ast.Sub: op.sub, ast.Mult: op.mul,
+             ast.Div: op.truediv, ast.Pow: op.pow, ast.BitXor: op.xor,
+             ast.USub: op.neg}
 
-# --- 1. Setup and Tool Definitions ---
-
-# Initialize the search tool
-ddg_search = DuckDuckGoSearchResults()
-
-# Create a simple math evaluation tool using numexpr
-@tool
-def calculate(expression: str) -> str:
-    """A highly accurate calculator tool for mathematical expressions. 
-    Input should be a numerical expression string (e.g., '10 + 5 * 2')."""
+def safe_eval(expr):
+    """Safe evaluation of simple math expressions"""
     try:
-        # Evaluate the expression safely
-        result = ne.evaluate(expression).item()
-        return str(result)
-    except Exception as e:
-        # Return a clear error message if calculation fails
-        return f"Error calculating the expression '{expression}': {e}"
+        def eval_(node):
+            if isinstance(node, ast.Num): # <number>
+                return node.n
+            elif isinstance(node, ast.Constant): # Python 3.8+
+                return node.value
+            elif isinstance(node, ast.BinOp): # <left> <operator> <right>
+                return operators[type(node.op)](eval_(node.left), eval_(node.right))
+            elif isinstance(node, ast.UnaryOp): # <operator> <operand> e.g., -1
+                return operators[type(node.op)](eval_(node.operand))
+            else:
+                raise TypeError(node)
+        return eval_(ast.parse(expr, mode='eval').body)
+    except:
+        return None
 
-# Pass the tools to the agent  
-tools = [ddg_search, calculate]
+def simple_google_search(query, api_key):
+    """Simple Google Custom Search implementation"""
+    # Note: This is a placeholder. In a real app, you'd need to set up Google Custom Search API
+    return f"Search results for '{query}' would appear here. (Google Custom Search API required)"
 
-# --- 2. Agent Initialization ---
+# --- Streamlit UI ---
 
-# The agent will be initialized inside the Streamlit app when the user clicks the button.
-# --- 3. Streamlit UI ---
-
-st.title("🤖 AI Research and Calculation Agent")
+st.title("🤖 Simple AI Calculator & Search Agent")
 
 st.write("""
-This agent can answer questions using DuckDuckGo search and perform calculations.
-Your Google API key is required to use the agent. 
+This is a simplified agent that can perform basic calculations and provide search functionality.
 """)
 
-# Get Google API Key from user
-api_key = st.text_input("Enter your Google API Key:", type="password", key="api_key_input")
+# Create two tabs for different functionalities
+tab1, tab2 = st.tabs(["Calculator", "Search"])
 
-# Get user prompt
-prompt_text = st.text_area("Ask a question or give a calculation:", height=100, key="prompt_input")
+with tab1:
+    st.header("🔢 Calculator")
+    math_expression = st.text_input("Enter a math expression (e.g., 2 + 3 * 4):")
+    
+    if st.button("Calculate", key="calc_button"):
+        if math_expression:
+            result = safe_eval(math_expression)
+            if result is not None:
+                st.success(f"Result: {result}")
+            else:
+                st.error("Invalid mathematical expression. Please use basic operators (+, -, *, /, **)")
+        else:
+            st.warning("Please enter a mathematical expression.")
 
-if st.button("Run Agent", key="run_button"):
-    if not api_key:
-        st.warning("Please enter your Google API Key to run the agent.")
-    elif not prompt_text:
-        st.warning("Please enter a question or calculation.")
-    else:
-        st.write("---")
-        st.subheader("Agent Output:")
-        
-        # Use an empty container to stream the response
-        response_container = st.empty()
-        full_response = ""
+with tab2:
+    st.header("🔍 Search")
+    search_query = st.text_input("Enter your search query:")
+    google_api_key = st.text_input("Google API Key (optional):", type="password")
+    
+    if st.button("Search", key="search_button"):
+        if search_query:
+            if google_api_key:
+                result = simple_google_search(search_query, google_api_key)
+                st.write(result)
+            else:
+                st.info(f"You searched for: '{search_query}'")
+                st.write("To get actual search results, you would need to:")
+                st.write("1. Set up Google Custom Search API")
+                st.write("2. Provide your API key")
+                st.write("3. This demo shows the structure for a working search function")
+        else:
+            st.warning("Please enter a search query.")
 
-        try:
-            # Initialize the LLM with the provided key
-            llm = ChatGoogleGenerativeAI(model="gemini-pro", temperature=0, google_api_key=api_key)
-
-            # Create the agent using langgraph
-            agent_executor = create_react_agent(llm, tools)
-
-            # Stream the response
-            for chunk in agent_executor.stream(
-                {"messages": [("user", prompt_text)]},
-                stream_mode="values"
-            ):
-                # Get the content of the last message
-                last_message = chunk["messages"][-1]
-                if hasattr(last_message, 'content'):
-                    # Append the content to the full response and display it
-                    full_response += str(last_message.content) + " "
-                    response_container.markdown(full_response)
-
-        except Exception as e:
-            st.error(f"An error occurred: {e}")
+# Add some example calculations
+st.subheader("Example Calculations:")
+st.code("""
+2 + 3 * 4 = 14
+(10 + 5) / 3 = 5.0
+2 ** 3 = 8
+100 - 25 = 75
+""")
 `,
           },
         },
