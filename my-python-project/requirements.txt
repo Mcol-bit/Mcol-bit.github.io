@@ -5,3 +5,4 @@ langgraph
 streamlit
 python-dotenv
 ddgs
+numpy>=1.26.2
