@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <title>AI Agent - Mcol-bit</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@stlite/mountable@0.39.0/build/stlite.css"
+    />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script src="https://cdn.jsdelivr.net/npm/@stlite/mountable@0.39.0/build/stlite.js"></script>
+    <script>
+      stlite.mount(
+        {
+          requirements: [
+            "streamlit",
+            "requests"
+          ],
+          entrypoint: "my_mathagent.py",
+          files: {
+            "my_mathagent.py": `
+import streamlit as st
+import requests
+import re
+import ast
+import operator as op
+
+# Math operators for safe evaluation
+operators = {ast.Add: op.add, ast.Sub: op.sub, ast.Mult: op.mul,
+             ast.Div: op.truediv, ast.Pow: op.pow, ast.BitXor: op.xor,
+             ast.USub: op.neg}
+
+def safe_eval(expr):
+    """Safe evaluation of simple math expressions"""
+    try:
+        def eval_(node):
+            if isinstance(node, ast.Num): # <number>
+                return node.n
+            elif isinstance(node, ast.Constant): # Python 3.8+
+                return node.value
+            elif isinstance(node, ast.BinOp): # <left> <operator> <right>
+                return operators[type(node.op)](eval_(node.left), eval_(node.right))
+            elif isinstance(node, ast.UnaryOp): # <operator> <operand> e.g., -1
+                return operators[type(node.op)](eval_(node.operand))
+            else:
+                raise TypeError(node)
+        return eval_(ast.parse(expr, mode='eval').body)
+    except:
+        return None
+
+def simple_google_search(query, api_key):
+    """Simple Google Custom Search implementation"""
+    # Note: This is a placeholder. In a real app, you'd need to set up Google Custom Search API
+    return f"Search results for '{query}' would appear here. (Google Custom Search API required)"
+
+# --- Streamlit UI ---
+
+st.title("🤖 Simple AI Calculator & Search Agent")
+
+st.write("""
+This is a simplified agent that can perform basic calculations and provide search functionality.
+""")
+
+# Create two tabs for different functionalities
+tab1, tab2 = st.tabs(["Calculator", "Search"])
+
+with tab1:
+    st.header("🔢 Calculator")
+    math_expression = st.text_input("Enter a math expression (e.g., 2 + 3 * 4):")
+    
+    if st.button("Calculate", key="calc_button"):
+        if math_expression:
+            result = safe_eval(math_expression)
+            if result is not None:
+                st.success(f"Result: {result}")
+            else:
+                st.error("Invalid mathematical expression. Please use basic operators (+, -, *, /, **)")
+        else:
+            st.warning("Please enter a mathematical expression.")
+
+with tab2:
+    st.header("🔍 Search")
+    search_query = st.text_input("Enter your search query:")
+    google_api_key = st.text_input("Google API Key (optional):", type="password")
+    
+    if st.button("Search", key="search_button"):
+        if search_query:
+            if google_api_key:
+                result = simple_google_search(search_query, google_api_key)
+                st.write(result)
+            else:
+                st.info(f"You searched for: '{search_query}'")
+                st.write("To get actual search results, you would need to:")
+                st.write("1. Set up Google Custom Search API")
+                st.write("2. Provide your API key")
+                st.write("3. This demo shows the structure for a working search function")
+        else:
+            st.warning("Please enter a search query.")
+
+# Add some example calculations
+st.subheader("Example Calculations:")
+st.code("""
+2 + 3 * 4 = 14
+(10 + 5) / 3 = 5.0
+2 ** 3 = 8
+100 - 25 = 75
+""")
+`,
+          },
+        },
+        document.getElementById("root")
+      );
+    </script>
+  </body>
+</html>
