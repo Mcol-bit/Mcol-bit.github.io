@@ -28,6 +28,12 @@ AdaBoost: Tested to see if boosting weak learners improved sensitivity.
 Random Forest: The final chosen model due to its ability to handle non-linear relationships and provide feature importance scores.
 
 ## 3. Key Findings: Feature Importance
+...
+*(Note: The chart below highlights that factors like Smoking...)*
+
+![Feature Importance Plot](images/feature_importance_improved.png)
+
+![Confusion Matrix](images/ConfusionMatrix.png)
 A critical requirement for healthcare AI is "interpretability"—understanding why a model makes a prediction. I used the Random Forest attributes to extract the top 10 risk drivers.
 ```python
 (Note: The chart below highlights that factors like Smoking and Alcohol Use were dominant predictors in this dataset.)
